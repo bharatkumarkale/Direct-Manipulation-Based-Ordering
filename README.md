@@ -6,4 +6,4 @@ A dashboard to demonstrate the proposed direct manipulation based reordering in 
 
 ![Dashboard][logo]
 
-[logo]: DirectReordering.png "Dashboard to present the proposed technique"
+[logo]: ./Images_Paper/DirectReordering.png "Dashboard to present the proposed technique"
