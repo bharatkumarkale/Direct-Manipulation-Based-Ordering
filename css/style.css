@@ -1,0 +1,189 @@
+html, body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	background-color: #000;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+}
+
+#visTitle {
+	font-size: 42px;
+	color: #fc8d62;
+ 	font-family: "Arial";
+	width: 100%;
+	height: 6.5%;
+	font-weight: bold;
+	text-align: center;
+ 	text-decoration: underline;
+ 	padding-top: 0.5%;
+}
+
+#visPane {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	height: 90%;
+}
+
+#barChartPane, #matrixVisPane {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	width: 50%;
+	height: 100%;
+	padding: 0.5%;
+	border: 1px solid #fff;
+	margin-top: 1%;
+}
+
+.description {
+	width: 98%;
+	height: 18%;
+	padding: 1%;
+}
+
+.content {
+	height: 81%;
+	width: 100%;
+}
+
+#lblDescription {
+	font-size: 20px;
+	color: #fc8d62;
+ 	font-family: "Arial";
+ 	font-weight: bold;
+ 	text-decoration: underline;
+}
+
+#para_Description {
+	font-size: 15px;
+	color: #fff;
+ 	font-family: "Arial";
+}
+
+.barRect {
+	fill: #66c2a5;
+	stroke: black;
+}
+
+.barActive, .mouseOver {
+	fill: #fc8d62;
+	cursor: move;
+}
+
+.mouseOverClick {
+	cursor: pointer;
+}
+
+path {
+	fill: none;
+	stroke: white;
+	stroke-width: 1;
+	stroke-dasharray: 3; 
+}
+
+.axis {
+	color: white;
+	font-size: 12px;
+ 	font-family: "Arial";
+}
+
+.x_tick {
+	fill: white;
+	font-size: 12px;
+	text-anchor: middle;
+ 	font-family: "Arial";
+}
+
+.axisLabel {
+	font-size: 18px;
+	color: #fc8d62;
+ 	font-family: "Arial";
+}
+
+.row_label {
+	font-size: 15px;
+	fill: #fff;
+	text-anchor: end;
+	alignment-baseline: central;
+ 	font-family: "Arial";
+}
+
+.col_label {
+	font-size: 15px;
+	fill: #fff;
+ 	font-family: "Arial";
+ 	text-anchor: start;
+}
+
+./*grid_cell {
+	stroke: none;
+	fill: #000;
+}*/
+
+.cell_label {
+	font-size: 8px;
+	alignment-baseline: central;
+	text-anchor: middle;
+ 	font-family: "Arial";
+}
+
+.grid_cell {
+	fill: #66c2a5;
+	stroke: none;
+}
+
+.selectedLabel {
+	font-size: 15px;
+	fill: #fc8d62;
+	font-weight: bold;
+	font-style: italic;
+}
+
+/*.q0-11 {fill: rgba(215, 48, 39, 0.8);}
+.q1-11 {fill: rgba(244, 109, 67, 0.8);}
+.q2-11 {fill: rgba(253, 174, 97, 0.8);}
+.q3-11 {fill: rgba(254, 224, 144, 0.8);}
+.q4-11 {fill: rgba(255, 255, 191, 0.8);}
+.q5-11 {fill: rgba(224, 243, 248, 0.8);}
+.q6-11 {fill: rgba(171, 217, 233, 0.8);}
+.q7-11 {fill: rgba(116, 173, 209, 0.8);}
+.q8-11 {fill: rgba(69, 117, 180, 0.8);}*/
+
+/*.q0-9{fill:rgb(255,247,236)}
+.q1-9{fill:rgb(254,232,200)}
+.q2-9{fill:rgb(253,212,158)}
+.q3-9{fill:rgb(253,187,132)}
+.q4-9{fill:rgb(252,141,89)}
+.q5-9{fill:rgb(239,101,72)}
+.q6-9{fill:rgb(215,48,31)}
+.q7-9{fill:rgb(179,0,0)}
+.q8-9{fill:rgb(127,0,0)}*/
+
+.q0-9{fill:rgb(247,252,240)}
+.q1-9{fill:rgb(224,243,219)}
+.q2-9{fill:rgb(204,235,197)}
+.q3-9{fill:rgb(168,221,181)}
+.q4-9{fill:rgb(123,204,196)}
+.q5-9{fill:rgb(78,179,211)}
+.q6-9{fill:rgb(43,140,190)}
+.q7-9{fill:rgb(8,104,172)}
+.q8-9{fill:rgb(8,64,129)}
+
+.matrixActive {
+	opacity: 0.7;
+}
+
+.horizontalLine {
+	fill: none;
+	stroke: #ffab00;
+	stroke-width: 4;
+}
