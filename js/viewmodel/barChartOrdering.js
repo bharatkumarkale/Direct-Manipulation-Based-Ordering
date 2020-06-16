@@ -28,6 +28,7 @@ let BarChartOrdering = function() {
 
 		bars: null,
 		selectedBars: [],
+		selectedRange: [],
 		isSelectionConsecutive: true,
 		draggedPositions: {},
 
@@ -113,6 +114,15 @@ let BarChartOrdering = function() {
 				}
 			}
 
+			if (self.selectedBars.length==2) {
+				self.selectedRange = [];
+				var startIndex = self.data.map(d => d[self.xAttr]).indexOf(self.selectedBars[0][self.xAttr]),
+					endIndex = self.data.map(d => d[self.xAttr]).indexOf(self.selectedBars[1][self.xAttr]);
+				for (var i = startIndex; i <= endIndex; i++) {
+					self.selectedRange.push(self.data[i]);
+				}
+			}
+
 			// if (self.isSelectionConsecutive) {
 				self.maxPosition = self.xScale(self.selectedBars[self.selectedBars.length-1][self.xAttr])+self.xScale.bandwidth()
 				self.minPosition = self.xScale(self.selectedBars[0][self.xAttr])-self.xScale.bandwidth()
@@ -122,7 +132,6 @@ let BarChartOrdering = function() {
 			self.minPosition = self.xScale.range()[0]
 		}
 
-		console.log(self.selectedBars);
 		self.draggedPositions[d[self.xAttr]] = self.xScale(d[self.xAttr])
 		d3.select(this).raise().classed("barActive", true);
 	}
@@ -170,23 +179,40 @@ let BarChartOrdering = function() {
 	/////// Sorts the entire dataset and updates the visualization /////// 
 	function sortAndUpdateRects(curNode, asc) {
 		if (self.selectedBars.includes(curNode)) {
-			if (asc) {
-				self.selectedBars.sort((a, b) => b[self.yAttr] - a[self.yAttr]);
+			var barsToSort = [];
+			if (self.selectedBars.length==2) {
+				barsToSort = self.selectedRange;
+				if (asc) {
+					barsToSort.sort((a, b) => b[self.yAttr] - a[self.yAttr]);
+				} else {
+					barsToSort.sort((a, b) => a[self.yAttr] - b[self.yAttr]);
+				}
 			} else {
-				self.selectedBars.sort((a, b) => a[self.yAttr] - b[self.yAttr]);
+				barsToSort = self.selectedBars;
+				if (curNode[self.yAttr]==d3.max(barsToSort.map(k => k[self.yAttr]))) {
+					if (asc) {
+						barsToSort.sort((a, b) => b[self.yAttr] - a[self.yAttr]);
+					} else {
+						barsToSort.sort((a, b) => a[self.yAttr] - b[self.yAttr]);
+					}
+				}
 			}
+			
 			for (var i = 0, j = 0; i < self.data.length; i++) {
-				if (self.selectedBars.includes(self.data[i])) {
-					self.data[i] = self.selectedBars[j];
+				if (barsToSort.includes(self.data[i])) {
+					self.data[i] = barsToSort[j];
 					j++;
 				}
 			}
+			
 		} else {
-			if (asc) {
-				self.data.sort((a, b) => b[self.yAttr] - a[self.yAttr]);
-			} else {
-				self.data.sort((a, b) => a[self.yAttr] - b[self.yAttr]);
-			}
+			if (curNode[self.yAttr]==d3.max(self.data.map(k => k[self.yAttr]))) {
+				if (asc) {
+					self.data.sort((a, b) => b[self.yAttr] - a[self.yAttr]);
+				} else {
+					self.data.sort((a, b) => a[self.yAttr] - b[self.yAttr]);
+				}
+			}	
 		}
 		
 		self.xScale.domain(self.data.map(d => d[self.xAttr]))
