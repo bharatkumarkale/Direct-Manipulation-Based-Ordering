@@ -59,6 +59,20 @@ let BarChartOrdering = function() {
 
 	function setSelection(sel) {
 		self.selectedBars = sel;
+		if (self.selectedBars.length==2) {
+			console.log(self.selectedBars);
+			getAllBarsInRange();
+			self.targetEle.selectAll('.barRect').classed("barSemiActive", function (d) {
+				if (self.selectedRange.map(d => d[self.xAttr]).includes(d[self.xAttr]) && 
+					! self.selectedBars.map(d => d[self.xAttr]).includes(d[self.xAttr])) {
+					return true;
+				} else {
+					return false;
+				}
+			});
+		} else {
+			self.targetEle.selectAll('.barSemiActive').classed("barSemiActive", false);
+		}
 		return this;
 	}
 
@@ -114,14 +128,14 @@ let BarChartOrdering = function() {
 				}
 			}
 
-			if (self.selectedBars.length==2) {
-				self.selectedRange = [];
-				var startIndex = self.data.map(d => d[self.xAttr]).indexOf(self.selectedBars[0][self.xAttr]),
-					endIndex = self.data.map(d => d[self.xAttr]).indexOf(self.selectedBars[1][self.xAttr]);
-				for (var i = startIndex; i <= endIndex; i++) {
-					self.selectedRange.push(self.data[i]);
-				}
-			}
+			// if (self.selectedBars.length==2) {
+			// 	// self.selectedRange = [];
+			// 	// var startIndex = self.data.map(d => d[self.xAttr]).indexOf(self.selectedBars[0][self.xAttr]),
+			// 	// 	endIndex = self.data.map(d => d[self.xAttr]).indexOf(self.selectedBars[1][self.xAttr]);
+			// 	// for (var i = startIndex; i <= endIndex; i++) {
+			// 	// 	self.selectedRange.push(self.data[i]);
+			// 	// }
+			// }
 
 			// if (self.isSelectionConsecutive) {
 				self.maxPosition = self.xScale(self.selectedBars[self.selectedBars.length-1][self.xAttr])+self.xScale.bandwidth()
@@ -168,6 +182,19 @@ let BarChartOrdering = function() {
 			.transition()
 				.duration(1000) 
 				.attr("x", d => self.margin.left+self.xScale(d)+self.xScale.bandwidth()/2);
+		if (self.selectedBars.length==2) {
+			getAllBarsInRange();
+			self.targetEle.selectAll('.barRect').classed("barSemiActive", function (d) {
+				if (self.selectedRange.map(d => d[self.xAttr]).includes(d[self.xAttr]) && 
+					! self.selectedBars.map(d => d[self.xAttr]).includes(d[self.xAttr])) {
+					return true;
+				} else {
+					return false;
+				}
+			});
+		}
+		
+		console.log(self.selectedRange);
 	}
 
 	/////// Helper method to determine x position of a given rectangle /////// 
@@ -217,13 +244,39 @@ let BarChartOrdering = function() {
 		
 		self.xScale.domain(self.data.map(d => d[self.xAttr]))
 
-		self.targetEle.selectAll('.barRect')
-			.data(self.data, d => d[self.xAttr])
+		var allBars = self.targetEle.selectAll('.barRect');
+		
+		allBars.classed("barSemiActive", d => {
+			if (self.selectedRange.map(d => d[self.xAttr]).includes(d[self.xAttr]) && 
+				! self.selectedBars.map(d => d[self.xAttr]).includes(d[self.xAttr])) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+
+		allBars.classed("barActive", d => {
+			if (self.selectedBars.map(d => d[self.xAttr]).includes(d[self.xAttr])) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+
+		allBars.data(self.data, d => d[self.xAttr])
 			.transition().duration(1000)
 				.attr("transform", (d) => {
-						return `translate(${self.xScale(d[self.xAttr])},${self.yScale(d[self.yAttr])})`;
-					})
+					return `translate(${self.xScale(d[self.xAttr])},${self.yScale(d[self.yAttr])})`;
+				})
+	}
 
+	function getAllBarsInRange() {
+		self.selectedRange = [];
+		var startIndex = self.data.map(d => d[self.xAttr]).indexOf(self.selectedBars[0][self.xAttr]),
+			endIndex = self.data.map(d => d[self.xAttr]).indexOf(self.selectedBars[1][self.xAttr]);
+		for (var i = startIndex; i <= endIndex; i++) {
+			self.selectedRange.push(self.data[i]);
+		}
 	}
 
 	return {

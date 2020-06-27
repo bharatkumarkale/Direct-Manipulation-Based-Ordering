@@ -79,6 +79,11 @@ body {
 	cursor: move;
 }
 
+.barSemiActive {
+	fill: #fc8d62;
+	opacity: 0.5;
+}
+
 .mouseOverClick {
 	cursor: pointer;
 }

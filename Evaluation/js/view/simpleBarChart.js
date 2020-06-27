@@ -9,7 +9,7 @@
 
 var App = App || {};
 
-let BarChartView = function(targetID) {
+let SimpleBarChartView = function(targetID) {
 	let self = {
 		targetID: "",
 		target: null,
@@ -46,7 +46,7 @@ let BarChartView = function(targetID) {
 	function draw() {
 		initTarget();
 
-		self.order = new BarChartOrdering();
+		// self.order = new BarChartOrdering();
 
 		self.rects = self.targetEle.selectAll('g')
 						.data(self.data)
@@ -76,18 +76,18 @@ let BarChartView = function(targetID) {
 									d3.select(`#bar_${d.letter}`).classed("mouseOver", false);
 								}
 
-								if (self.selection.length>0) {
-									self.order.setSelection(self.selection);
-								} else {
-									self.order.setSelection(self.data);
-								}
+								// if (self.selection.length>0) {
+								// 	self.order.setSelection(self.selection);
+								// } else {
+								// 	self.order.setSelection(self.data);
+								// }
 								d3.event.preventDefault();
 							})
-							.call(d3.drag()
-								.subject( (d) => { return {x: self.xScale(d.letter)}; })
-								.on("start", self.order.dragstarted)
-								.on("drag", self.order.dragged)
-								.on("end", self.order.dragended));
+							// .call(d3.drag()
+							// 	.subject( (d) => { return {x: self.xScale(d.letter)}; })
+							// 	.on("start", self.order.dragstarted)
+							// 	.on("drag", self.order.dragged)
+							// 	.on("end", self.order.dragended));
 
 		self.targetSvg.append('rect')
 			.attr('x', self.margin.left)
@@ -135,19 +135,21 @@ let BarChartView = function(targetID) {
 							.attr("text-anchor", "start")
 							.text("↑ Frequency")
 	
-		self.order.setTargetId(self.targetID.substring(1,self.targetID.length))
-					.setData(self.data)
-					.setBars(self.rects)
-					.setMargin(self.margin)
-					.setXScale(self.xScale)
-					.setXAttribute("letter")
-					.setYScale(self.yScale)
-					.setYAttribute("frequency")
-					.setXTickClass("x_tick");
+		// self.order.setTargetId(self.targetID.substring(1,self.targetID.length))
+		// 			.setData(self.data)
+		// 			.setBars(self.rects)
+		// 			.setMargin(self.margin)
+		// 			.setXScale(self.xScale)
+		// 			.setXAttribute("letter")
+		// 			.setYScale(self.yScale)
+		// 			.setYAttribute("frequency")
+		// 			.setXTickClass("x_tick");
 	}
 
+	function clear() {
+		document.getElementById(targetID.slice(1)).innerHTML = '';
+	}
 
-	//////////////////// Private Methods ////////////////////
 
 	function initTarget() {
 		self.target = d3.select(self.targetID);
@@ -196,6 +198,7 @@ let BarChartView = function(targetID) {
 
 	return{
 		data,
-		draw
+		draw,
+		clear,
 	};
 }
