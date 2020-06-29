@@ -9,7 +9,7 @@ html, body {
 body {
 	display: flex;
 	flex-direction: column;
- 	font-family: "Arial";
+ 	font-family: "sans-serif";
 }
 
 #titlePane {
@@ -97,7 +97,7 @@ label {
 
 .barSemiActive {
 	fill: #fc8d62;
-	opacity: 0.5;
+	opacity: 0.6;
 }
 
 .mouseOverClick {
@@ -155,4 +155,11 @@ label {
 	fill: #fc8d62;
 	font-weight: bold;
 	font-style: italic;
+}
+
+.boundary {
+	fill: none;
+	stroke: white;
+	stroke-width: 1;
+	stroke-dasharray: 3; 
 }

@@ -47,15 +47,22 @@ var App = App || {};
 				instructionsText += '<li>Use the tallest bar in the selection to reorder only the selected bars.</li>';
 				
 				if (App.views.groupBarChartView)
-					App.views.groupBarChartView.draw();
+					App.views.groupBarChartView.data(App.models.data.getGroupedBarChartData()).draw();	
 
 				break;
 
 			case "matrix":
-				descText += ''
+				descText += '<li>Order rows in any order of your preference</li>'
+				descText += '<li>Order columns in any order of your preference</li>'
+				descText += '<li>Order a set of rows and columns to reveal the clusters</li>'
 
+				instructionsText += '<li>Drag any cell to left/right to reorder the corresponding column.</li>';
+				instructionsText += '<li>Drag any cell to top/bottom to reorder the corresponding row.</li>';
+				instructionsText += '<li>Draw along row headers to reorder the corresponding columns based on their visual similarity.</li>';
+				instructionsText += '<li>Draw along column headers to reorder the corresponding rows based on their visual similarity.</li>';
+				
 				if (App.views.matrixView)
-					App.views.matrixView.draw();
+					App.views.matrixView.data(App.models.data.getMatrixData()).draw();
 
 				break;
 
@@ -72,7 +79,7 @@ var App = App || {};
 				instructionsText += '<li>Use the tallest bar in the selection to reorder only the selected bars.</li>';
 
 				if (App.views.simpleBarChartView)
-					App.views.simpleBarChartView.draw();
+					App.views.simpleBarChartView.data(App.models.data.getSimpleBarChartData()).draw();
 
 		}
 		descText += '</ol>';
