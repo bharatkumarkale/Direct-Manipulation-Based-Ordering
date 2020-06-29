@@ -128,15 +128,6 @@ let SimpleBarChartOrdering = function() {
 				}
 			}
 
-			// if (self.selectedBars.length==2) {
-			// 	// self.selectedRange = [];
-			// 	// var startIndex = self.data.map(d => d[self.xAttr]).indexOf(self.selectedBars[0][self.xAttr]),
-			// 	// 	endIndex = self.data.map(d => d[self.xAttr]).indexOf(self.selectedBars[1][self.xAttr]);
-			// 	// for (var i = startIndex; i <= endIndex; i++) {
-			// 	// 	self.selectedRange.push(self.data[i]);
-			// 	// }
-			// }
-
 			// if (self.isSelectionConsecutive) {
 				self.maxPosition = self.xScale(self.selectedBars[self.selectedBars.length-1][self.xAttr])+self.xScale.bandwidth()
 				self.minPosition = self.xScale(self.selectedBars[0][self.xAttr])
@@ -186,11 +177,9 @@ let SimpleBarChartOrdering = function() {
 
 		if (d3.event.x>self.maxPosition) { 
 			d3.select(this).select('rect').classed("mouseOver", false);
-			// d[self.yAttr]==d3.max(self.data.map(k => k[self.yAttr])) ? sortAndUpdateRects(false) : "";
 			sortAndUpdateRects(d, false);
 		} else if (d3.event.x<self.minPosition) { 
 			d3.select(this).select('rect').classed("mouseOver", false);
-			// d[self.yAttr]==d3.max(self.data.map(k => k[self.yAttr])) ? sortAndUpdateRects(true) : "";
 			sortAndUpdateRects(d, true);
 		}
 
@@ -198,6 +187,9 @@ let SimpleBarChartOrdering = function() {
 			.transition()
 				.duration(1000) 
 				.attr("x", d => self.margin.left+self.xScale(d)+self.xScale.bandwidth()/2);
+
+		////// To Refresh the selected bar range after drag ends //////
+
 		// if (self.selectedBars.length==2) {
 		// 	getAllBarsInRange();
 		// 	self.targetEle.selectAll('.barRect').classed("barSemiActive", function (d) {

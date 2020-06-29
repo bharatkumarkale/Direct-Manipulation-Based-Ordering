@@ -68,15 +68,15 @@ let MatrixView = function(targetID) {
 	function draw() {
 		initTarget();
 
-		// self.order = new MatrixVisOrdering();
+		self.order = new MatrixVisOrdering();
 
-		// // Array.from(d3.group(self.data, d => d[self.column])).forEach(d => {			
-		// // 	self.sortedRowsPerColumn[d[0]] = d[1].sort((a, b) => b.value - a.value).map(k => k[self.row]);
-		// // })
+		// Array.from(d3.group(self.data, d => d[self.column])).forEach(d => {			
+		// 	self.sortedRowsPerColumn[d[0]] = d[1].sort((a, b) => b.value - a.value).map(k => k[self.row]);
+		// })
 
-		// // Array.from(d3.group(self.data, d => d[[self.row]])).forEach(d => {
-		// // 	self.sortedColumnsPerRow[d[0]] = d[1].sort((a, b) => b.value - a.value).map(k => k[self.column]);
-		// // })
+		// Array.from(d3.group(self.data, d => d[[self.row]])).forEach(d => {
+		// 	self.sortedColumnsPerRow[d[0]] = d[1].sort((a, b) => b.value - a.value).map(k => k[self.column]);
+		// })
 
 		self.xScale.range([0, self.width])
 					.domain(self.data.map(d => d[self.column]))
@@ -102,10 +102,10 @@ let MatrixView = function(targetID) {
 				.on('mouseout', function() {
 					d3.select(this).classed("mouseOver", false);
 				})
-				// .call(d3.drag()
-				// 		.on("start", self.order.dragCellStarted)
-				// 		.on("drag", self.order.draggedCell)
-				// 		.on("end", self.order.dragCellEnded));
+				.call(d3.drag()
+						.on("start", self.order.dragCellStarted)
+						.on("drag", self.order.draggedCell)
+						.on("end", self.order.dragCellEnded));
 
 		var rowLabelsG = self.targetEle.append("g").attr("class", "row_labels");
 		rowLabelsG.append('rect')
@@ -114,10 +114,10 @@ let MatrixView = function(targetID) {
 			.attr('width', self.margin.left)
 			.attr('height', self.height)
 			.style('fill', 'black')
-			// .call(d3.drag()
-			// 	.on("start", self.order.dragRowLabelsStarted)
-			// 	.on("drag", self.order.draggedRowLabels)
-			// 	.on("end", self.order.dragRowLabelsEnded));
+			.call(d3.drag()
+				.on("start", self.order.dragRowLabelsStarted)
+				.on("drag", self.order.draggedRowLabels)
+				.on("end", self.order.dragRowLabelsEnded));
 
 		rowLabelsG.selectAll(".row_label")
 			.data([... new Set(self.data.map(d => d[self.row]))])
@@ -140,10 +140,10 @@ let MatrixView = function(targetID) {
 			.attr('width', self.width)
 			.attr('height', self.margin.top/2)
 			.style('fill', 'black')
-			// .call(d3.drag()
-			// 	.on("start", self.order.dragColLabelsStarted)
-			// 	.on("drag", self.order.draggedColLabels)
-			// 	.on("end", self.order.dragColLabelsEnded));
+			.call(d3.drag()
+				.on("start", self.order.dragColLabelsStarted)
+				.on("drag", self.order.draggedColLabels)
+				.on("end", self.order.dragColLabelsEnded));
 			
 		colLabelsG.selectAll(".col_label")
 			.data([... new Set(self.data.map(d => d[self.column]))])
@@ -159,17 +159,17 @@ let MatrixView = function(targetID) {
 					d3.select(this).classed("mouseOverClick", false);
 				});
 
-		// self.order.setTargetId(self.targetID.substring(1,self.targetID.length))
-		// 			.setData(self.data)
-		// 			.setMargin(self.margin)
-		// 			.setXScale(self.xScale)
-		// 			.setRowAttribute("Country")
-		// 			.setYScale(self.yScale)
-		// 			.setColumnAttribute("columnAttr")
-		// 			.setRowLabelClass("row_label")
-		// 			.setColLabelClass("col_label")
-		// 			.setCellClass("grid_cell")
-		// 			.setColumnLabelRotation(self.colLableAngle);
+		self.order.setTargetId(self.targetID.substring(1,self.targetID.length))
+					.setData(self.data)
+					.setMargin(self.margin)
+					.setXScale(self.xScale)
+					.setRowAttribute("Country")
+					.setYScale(self.yScale)
+					.setColumnAttribute("columnAttr")
+					.setRowLabelClass("row_label")
+					.setColLabelClass("col_label")
+					.setCellClass("grid_cell")
+					.setColumnLabelRotation(self.colLableAngle);
 	}
 
 	function clear() {
