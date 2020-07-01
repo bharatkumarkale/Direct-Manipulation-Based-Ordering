@@ -100,6 +100,20 @@ label {
 	opacity: 0.6;
 }
 
+.selectedBar {
+	fill: #fc8d62;
+}
+
+.selectedGroupBar {
+	stroke: white;
+	stroke-width: 2;
+}
+
+.dragGroup {
+	stroke: #fc8d62;
+	stroke-width: 2;
+}
+
 .mouseOverClick {
 	cursor: pointer;
 }

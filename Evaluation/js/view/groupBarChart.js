@@ -34,6 +34,11 @@ let GroupBarChartView = function(targetID) {
 
 		order: null,
 		selection: [],
+
+		groupDraggedPositions: {},
+		subTypeSelected: false,
+		selectedSubType: '',
+		selectedGroups: [],
 	}
 
 	init();
@@ -56,11 +61,13 @@ let GroupBarChartView = function(targetID) {
 			.data(self.data)
 			.enter().append("g")
 				.attr("transform", d => "translate(" + self.xScaleGroup(d.State) + ",0)")
+				.attr("class", d => `group ${format(d.State)}`)
 			.selectAll("rect")
 			.data(d => self.keys.map(key => {
 				var obj={};
 				obj['key']= key;
 				obj['value']= d[key];
+				obj['group']= d.State;
 				return obj;
 			}) )
 			.enter().append("rect")
@@ -68,6 +75,7 @@ let GroupBarChartView = function(targetID) {
 				.attr("y", d => self.yScale(d.value))
 				.attr("width", self.xScaleBar.bandwidth())
 				.attr("height", d => { return self.height - self.yScale(d.value); })
+				.attr("class", d => `group_${format(d.group)} key_${format(d.key)} bar`)
 				.attr("fill", d => self.colorScale(d.key))
 				.on('mouseover', function(d) {
 					d3.select(this).classed("mouseOver", true);
@@ -76,6 +84,18 @@ let GroupBarChartView = function(targetID) {
 					if (self.selection.indexOf(d) == -1) {
 						d3.select(this).classed("mouseOver", false);
 					}
+				})
+				.on('click', function(d) {
+					self.subTypeSelected = true;
+					if (self.subTypeSelected) {
+						self.selectedSubType = d.key;
+					} else {
+						self.selectedSubType = '';
+					}
+
+					self.targetEle.selectAll(`.bar`).classed("selectedBar", false);
+					self.targetEle.selectAll(`.key_${format(d.key)}`).classed("selectedBar", true);
+					d3.event.preventDefault();
 				});
 
 		self.xAxis = self.targetSvg.append('g')
@@ -103,10 +123,24 @@ let GroupBarChartView = function(targetID) {
 				})
 				.on('mouseout', function() {
 					d3.select(this).classed("mouseOver", false);
-				});
+				})
+				.on('click', function(d) {
+					if (self.selectedGroups.includes(d)) {
+						self.selectedGroups.splice(self.selectedGroups.indexOf(d), 1);
+						self.targetEle.selectAll(`.group_${format(d)}`).classed("selectedGroupBar", false);
+					} else {
+						self.selectedGroups.push(d);
+						self.targetEle.selectAll(`.group_${format(d)}`).classed("selectedGroupBar", true);
+					}
+					d3.event.preventDefault();
+				})
+				.call(d3.drag()
+						.on("start", groupDragstarted)
+						.on("drag", groupDragged)
+						.on("end", groupDragended));
 
 		self.yAxis = self.targetSvg.append("g")
-						.attr("transform", `translate(${self.margin.left*0.9},${self.margin.top})`)
+						.attr("transform", `translate(${self.margin.left*0.6},${self.margin.top})`)
 						.attr("class", "axis y")
 						.call(d3.axisLeft(self.yScale).ticks(null, "s"))
 						.append("text")
@@ -117,7 +151,7 @@ let GroupBarChartView = function(targetID) {
 							.attr("text-anchor", "start")
 							.text("Population");
 
-		drawLegend()
+		drawLegend();
 	}
 
 	function clear() {
@@ -148,14 +182,13 @@ let GroupBarChartView = function(targetID) {
             .attr("height", self.totalHeight)
             .on("click", function(d) {
             	if (!d3.event.defaultPrevented) {
-            		self.targetEle.selectAll('.barRect').classed("mouseOver", false);
-            		self.targetEle.selectAll('.barRect').classed("barActive", false);
-            		self.targetEle.selectAll('.barRect').classed("barSemiActive", false);
+            		self.subTypeSelected = false;
+            		self.selectedSubType="";
 
-            		self.selection = [];
-            		if (self.order) {
-						self.order.setSelection(self.data);
-					}
+            		self.targetEle.selectAll(`.bar`).classed("selectedBar", false);
+
+            		self.selectedGroups=[];
+            		self.targetEle.selectAll(`.bar`).classed("selectedGroupBar", false);
             	}
             });
         self.targetEle = self.targetSvg.append("g")
@@ -193,6 +226,135 @@ let GroupBarChartView = function(targetID) {
 			.attr("dy", "0.32em")
 			.attr("fill", "white")
 			.text(d => d);
+	}
+
+	function format(str) {
+		return str.replace(/\W/g, '');
+	}
+
+	function groupDragstarted(d) {
+		var line = d3.line().x(d => d[0]).y(d => d[1]);
+
+		self.targetEle.selectAll(`.group_${d}`).classed('dragGroup', true)
+
+		if (self.selectedGroups.includes(d)) {
+			self.selectedGroups.sort((a, b) => self.xScaleGroup(a)-self.xScaleGroup(b));
+			self.maxPosition = self.xScaleGroup(self.selectedGroups[self.selectedGroups.length-1])+self.xScaleGroup.bandwidth()
+			self.minPosition = self.xScaleGroup(self.selectedGroups[0])
+		} else {
+			self.maxPosition = self.xScaleGroup.range()[1]
+			self.minPosition = self.xScaleGroup.range()[0]
+		}
+
+		self.minPosition -= self.xScaleGroup.padding()*self.xScaleGroup.bandwidth();
+		self.maxPosition += self.xScaleGroup.padding()*self.xScaleGroup.bandwidth();
+
+		self.targetEle.append("path")
+			.datum([[self.minPosition, self.yScale.range()[0]],
+					[self.minPosition, 0]])
+			.attr("d", line)
+			.attr("class", "boundary")
+		self.targetEle.append("path")
+			.datum([[self.maxPosition, self.yScale.range()[0]],
+					[self.maxPosition, 0]])
+			.attr("d", line)
+			.attr("class", "boundary")
+
+		self.targetEle.selectAll(`.${d}`).raise();
+		self.groupDraggedPositions[d] = self.xScaleGroup(d);
+		d3.selectAll(this).raise();
+	}
+
+	function groupDragged(d) {
+		var curX = d3.event.x-self.margin.left;
+		if (curX<self.maxPosition && curX>self.minPosition) {
+			self.groupDraggedPositions[d] = d3.event.x-self.margin.left-self.xScaleGroup.bandwidth()/2;
+			self.data.sort((a, b) => groupPosition(a.State) - groupPosition(b.State));
+			self.xScaleGroup.domain(self.data.map(d => d.State))
+			self.targetEle.selectAll('.group')
+				.attr('transform', d => `translate(${groupPosition(d.State)},0)`);
+
+			self.targetSvg.selectAll(`.x_tick`)
+				.attr("x", d => groupPosition(d)+self.margin.left+self.xScaleGroup.bandwidth()/2);
+		}
+	}
+
+	function groupDragended(d) {
+		var curX = d3.event.x-self.margin.left;
+		delete self.groupDraggedPositions[d];
+		self.targetEle.selectAll(`.${d}`)
+			.transition()
+				.duration(500)
+				.attr("transform", d => `translate(${groupPosition(d.State)},0)`)
+
+		if (self.subTypeSelected && d==getMaxGroupOfSelectedSubtype(d)) {
+			if (curX>self.maxPosition) { 
+				sortAndUpdateGroups(d, false);
+			} else if (curX<self.minPosition) { 
+				sortAndUpdateGroups(d, true);
+			}
+		}
+
+		self.targetEle.selectAll(`.group_${d}`).classed('dragGroup', false);
+
+		self.targetEle.selectAll('.group')
+			.transition().duration(1000)
+				.attr('transform', d => `translate(${groupPosition(d.State)},0)`);
+
+		d3.selectAll('.x_tick')
+			.transition()
+				.duration(500)
+				.attr("x", d => self.margin.left+self.xScaleGroup(d)+self.xScaleGroup.bandwidth()/2);
+
+
+		self.targetEle.selectAll(".boundary")
+			.transition()
+				.duration(500) 
+				.remove();
+	}
+
+	/////// Helper method to determine x position of a group /////// 
+	function groupPosition(d) {
+		var newP = self.groupDraggedPositions[d];
+		return newP == null ? self.xScaleGroup(d) : newP;
+	}
+
+	function getMaxGroupOfSelectedSubtype(grp) {
+		if (self.selectedGroups.includes(grp)) {
+			var filteredData = self.data.filter(d => self.selectedGroups.includes(d.State));
+			return filteredData[d3.maxIndex(filteredData, d => d[self.selectedSubType])].State;
+		} else {
+			return self.data[d3.maxIndex(self.data, d => d[self.selectedSubType])].State;
+		}
+	}
+
+	function sortAndUpdateGroups(curGroup, asc) {
+		if (self.selectedGroups.includes(curGroup)) {
+			var filteredData = self.data.filter(d => self.selectedGroups.includes(d.State));
+			if (asc) {
+				filteredData.sort((a, b) => b[self.selectedSubType] - a[self.selectedSubType])
+			} else {
+				filteredData.sort((a, b) => a[self.selectedSubType] - b[self.selectedSubType])
+			}
+
+			var filteredDataGroups = filteredData.map(d => d.State);
+
+			for (var i = 0, j = 0; i < self.data.length; i++) {
+				if (filteredDataGroups.includes(self.data[i].State)) {
+					self.data[i] = filteredData[j];
+					j++;
+				}
+			}
+		} else {
+			if (asc) {
+				self.data.sort((a, b) => b[self.selectedSubType]-a[self.selectedSubType])
+			} else {
+				self.data.sort((a, b) => a[self.selectedSubType]-b[self.selectedSubType])
+			}
+		}
+
+		self.xScaleGroup.domain(self.data.map(d => d.State));
+
 	}
 
 	return{
