@@ -37,8 +37,10 @@ let MatrixVisOrdering = function() {
 		dragStartPosition: [],
 		dragDirection: '',
 
-		maxPosition:0,
-		minPosition:0,
+		maxPosition: 0,
+		minPosition: 0,
+
+		line: d3.line().x(d => d[0]).y(d => d[1]),
 	};
 
 	function setTargetId(id) {
@@ -171,12 +173,12 @@ let MatrixVisOrdering = function() {
 		d3.selectAll(`.${self.cellCls}`).raise().classed("matrixActive", false);
 	}
 
-	function dragRowLabelsStarted() {	
+	function dragRowLabelsStarted() {
 		self.yScale.domain().forEach(d => self.yScaleReverse[d]=[self.yScale(d), self.yScale(d)+self.yScale.bandwidth()]);
-		draggedRowLabels(this);
+		// draggedRowLabels();
 	}
 
-	function draggedRowLabels() {	
+	function draggedRowLabels() {
 		for (var key in self.yScaleReverse) {
 			if (self.yScaleReverse[key][0] <= d3.event.y && d3.event.y <= self.yScaleReverse[key][1]) {
 				d3.select(`#row_${format(key)}`).classed('selectedLabel', true);				
@@ -203,7 +205,7 @@ let MatrixVisOrdering = function() {
 
 	function dragColLabelsStarted() {	
 		self.xScale.domain().forEach(d => self.xScaleReverse[d]=[self.xScale(d), self.xScale(d)+self.xScale.bandwidth()]);	
-		draggedColLabels();
+		// draggedColLabels();
 	}
 
 	function draggedColLabels() {	

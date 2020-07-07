@@ -47,7 +47,6 @@ let SimpleBarChartView = function(targetID) {
 		initTarget();
 
 		self.order = new SimpleBarChartOrdering();
-
 		self.rects = self.targetEle.selectAll('g')
 						.data(self.data)
 						.enter().append("rect")
@@ -81,10 +80,9 @@ let SimpleBarChartView = function(targetID) {
 								} else {
 									self.order.setSelection(self.data);
 								}
-								d3.event.preventDefault();
+								d3.event.stopPropagation();
 							})
 							.call(d3.drag()
-								.subject( (d) => { return {x: self.xScale(d.letter)}; })
 								.on("start", self.order.dragstarted)
 								.on("drag", self.order.dragged)
 								.on("end", self.order.dragended));
@@ -150,7 +148,6 @@ let SimpleBarChartView = function(targetID) {
 		document.getElementById(targetID.slice(1)).innerHTML = '';
 	}
 
-
 	function initTarget() {
 		self.target = d3.select(self.targetID);
 
@@ -174,16 +171,14 @@ let SimpleBarChartView = function(targetID) {
             .attr("width", self.totalWidth)
             .attr("height", self.totalHeight)
             .on("click", function(d) {
-            	if (!d3.event.defaultPrevented) {
-            		self.targetEle.selectAll('.barRect').classed("mouseOver", false);
-            		self.targetEle.selectAll('.barRect').classed("barActive", false);
-            		self.targetEle.selectAll('.barRect').classed("barSemiActive", false);
+        		self.targetEle.selectAll('.barRect').classed("mouseOver", false);
+        		self.targetEle.selectAll('.barRect').classed("barActive", false);
+        		self.targetEle.selectAll('.barRect').classed("barSemiActive", false);
 
-            		self.selection = [];
-            		if (self.order) {
-						self.order.setSelection(self.data);
-					}
-            	}            	
+        		self.selection = [];
+        		if (self.order) {
+					self.order.setSelection(self.data);
+				}           	
             });
         self.targetEle = self.targetSvg.append("g")
                 			.attr("transform", "translate(" + self.margin.left + "," + self.margin.top + ")");

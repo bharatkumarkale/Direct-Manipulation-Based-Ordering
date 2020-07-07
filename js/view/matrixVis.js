@@ -30,7 +30,7 @@ let MatrixView = function(targetID) {
 		yScale: d3.scaleBand(),	
 		cellRadiusScale: d3.scaleLinear(),	
 
-		colLableAngle: -60,
+		colLableAngle: -90,
 		order: null,
 	}
 

@@ -70,6 +70,7 @@ let SimpleBarChartOrdering = function() {
 				}
 			});
 		} else {
+			self.selectedRange=[];
 			self.targetEle.selectAll('.barSemiActive').classed("barSemiActive", false);
 		}
 		return this;
@@ -153,11 +154,11 @@ let SimpleBarChartOrdering = function() {
 
 		self.minPosition -= self.xScale.bandwidth();
 		self.draggedPositions[d[self.xAttr]] = self.xScale(d[self.xAttr])
-		d3.select(this).raise().classed("barActive", true);
 	}
 
 	function dragged(d) {
 		if (d3.event.x<self.maxPosition && d3.event.x>self.minPosition) {
+			d3.select(this).raise().classed("barActive", true);
 			self.draggedPositions[d[self.xAttr]] = Math.min(self.xScale.range()[1], Math.max(0, d3.event.x))
 			self.data.sort((a, b) => position(a) - position(b));
 			self.xScale.domain(self.data.map(k => k[self.xAttr]))
@@ -262,14 +263,6 @@ let SimpleBarChartOrdering = function() {
 			}
 		});
 
-		allBars.classed("barActive", d => {
-			if (self.selectedBars.map(d => d[self.xAttr]).includes(d[self.xAttr])) {
-				return true;
-			} else {
-				return false;
-			}
-		});
-
 		allBars.data(self.data, d => d[self.xAttr])
 			.transition().duration(1000)
 				.attr("transform", (d) => {
@@ -281,8 +274,14 @@ let SimpleBarChartOrdering = function() {
 		self.selectedRange = [];
 		var startIndex = self.data.map(d => d[self.xAttr]).indexOf(self.selectedBars[0][self.xAttr]),
 			endIndex = self.data.map(d => d[self.xAttr]).indexOf(self.selectedBars[1][self.xAttr]);
-		for (var i = startIndex; i <= endIndex; i++) {
-			self.selectedRange.push(self.data[i]);
+		if (startIndex<endIndex){
+			for (var i = startIndex; i <= endIndex; i++) {
+				self.selectedRange.push(self.data[i]);
+			}
+		} else {
+			for (var i = endIndex; i <= startIndex; i++) {
+				self.selectedRange.push(self.data[i]);
+			}
 		}
 	}
 

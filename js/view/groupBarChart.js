@@ -47,6 +47,8 @@ let GroupBarChartView = function(targetID) {
 		minPositionInGroup: 0,
 		maxPositionInGroup: 0,
 		xScaleBarDrag: d3.scaleBand().padding(0.05),
+
+		group_sortedKeys: {},
 	}
 
 	init();
@@ -56,8 +58,15 @@ let GroupBarChartView = function(targetID) {
 	}
 
 	function data(data) {
-		self.data=data;
+		self.data = data;
 		self.keys = data.columns.slice(1);
+		self.data.map(d => d.State).forEach(d => {
+			self.group_sortedKeys[d]=[];
+			var k;
+			for(k of self.keys){
+				self.group_sortedKeys[d].push(k);
+			}
+		})
 		return this;
 	}
 
@@ -94,7 +103,6 @@ let GroupBarChartView = function(targetID) {
 					}
 				})
 				.on('click', function(d) {
-					console.log(d3.event.defaultPrevented);
 					if (!d3.event.defaultPrevented) {
 						self.subTypeSelected = true;
 						if (self.subTypeSelected) {
@@ -217,7 +225,6 @@ let GroupBarChartView = function(targetID) {
 
 		self.yScale.domain([0, d3.max(self.data, d => d3.max(self.keys, key => +d[key]) )]).nice()
 					.range([self.height, 0]);
-
 	}
 
 	function drawLegend() {
@@ -328,12 +335,12 @@ let GroupBarChartView = function(targetID) {
 	}
 
 	function barDragstarted(d) {
-		var xScaleDomain = self.xScaleBar.domain(),
+		var xScaleDomain = self.group_sortedKeys[d.group],
 			grp = d.group,
 			line = d3.line().x(d => d[0]).y(d => d[1]),
 			buffer = self.xScaleBar.padding()*self.xScaleBar.bandwidth();
 
-		self.xScaleBarDrag.range(self.xScaleBar.range()).domain(self.xScaleBar.domain());
+		self.xScaleBarDrag.range(self.xScaleBar.range()).domain(xScaleDomain);
 
 		
 		self.maxPositionInGroup = buffer + self.xScaleGroup(grp)+self.xScaleGroup.bandwidth()
@@ -353,8 +360,6 @@ let GroupBarChartView = function(targetID) {
 		self.minPositionInGroup -= self.xScaleBarDrag.bandwidth()+buffer;
 		self.barsInAGroupDraggedPositions[d.key] = self.xScaleBarDrag(d.key)
 		d3.select(this).raise().classed("barActive", true);
-
-		console.log(self.barsInAGroupDraggedPositions);
 	}
 
 	function barDragged(d) {
@@ -362,8 +367,8 @@ let GroupBarChartView = function(targetID) {
 
 		if (curPosX<self.maxPositionInGroup && curPosX>self.minPositionInGroup) {
 			self.barsInAGroupDraggedPositions[d.key] = d3.event.x
-			self.keys.sort((a, b) => barPosition(a) - barPosition(b))
-			self.xScaleBarDrag.domain(self.keys)
+			self.group_sortedKeys[d.group].sort((a, b) => barPosition(a) - barPosition(b))
+			self.xScaleBarDrag.domain(self.group_sortedKeys[d.group])
 	
 			self.targetEle.selectAll(`.${format(d.group)} > rect`)
 				.attr("x", d => barPosition(d.key));
@@ -458,12 +463,12 @@ let GroupBarChartView = function(targetID) {
 
 		if (curNode.value==d3.max(values)) {
 			if (asc) {
-				self.keys.sort((a, b) => self.selectedGroupData[b]-self.selectedGroupData[a])
+				self.group_sortedKeys[curNode.group].sort((a, b) => self.selectedGroupData[b]-self.selectedGroupData[a])
 			} else {
-				self.keys.sort((a, b) => self.selectedGroupData[a]-self.selectedGroupData[b])
+				self.group_sortedKeys[curNode.group].sort((a, b) => self.selectedGroupData[a]-self.selectedGroupData[b])
 			}
 			
-			self.xScaleBarDrag.domain(self.keys);
+			self.xScaleBarDrag.domain(self.group_sortedKeys[curNode.group]);
 			self.targetEle.selectAll(`.${format(curNode.group)} > rect`)
 				.transition().duration(1000)
 					.attr("x", d => self.xScaleBarDrag(d.key));

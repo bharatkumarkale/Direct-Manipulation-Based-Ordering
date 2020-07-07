@@ -115,7 +115,7 @@ label {
 }
 
 .mouseOverClick {
-	cursor: pointer;
+	cursor: default;
 }
 
 .axis {
@@ -150,6 +150,7 @@ label {
 	fill: #fff;
  	font-family: "Arial";
  	text-anchor: start;
+	alignment-baseline: central;
 }
 
 .cell_label {
