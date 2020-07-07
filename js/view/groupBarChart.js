@@ -309,7 +309,9 @@ let GroupBarChartView = function(targetID) {
 				.duration(500)
 				.attr("transform", d => `translate(${groupPosition(d.State)},0)`)
 
+console.log(self.subTypeSelected, getMaxGroupOfSelectedSubtype(d))
 		if (self.subTypeSelected && d==getMaxGroupOfSelectedSubtype(d)) {
+			console.log("sorted order:")
 			if (curX>self.maxPositionGroups) { 
 				sortAndUpdateGroups(d, false);
 			} else if (curX<self.minPositionGroups) { 
@@ -359,11 +361,11 @@ let GroupBarChartView = function(targetID) {
 
 		self.minPositionInGroup -= self.xScaleBarDrag.bandwidth()+buffer;
 		self.barsInAGroupDraggedPositions[d.key] = self.xScaleBarDrag(d.key)
-		d3.select(this).raise().classed("barActive", true);
 	}
 
 	function barDragged(d) {
 		var curPosX = d3.event.x+self.xScaleGroup(d.group);
+		d3.select(this).raise().classed("barActive", true);
 
 		if (curPosX<self.maxPositionInGroup && curPosX>self.minPositionInGroup) {
 			self.barsInAGroupDraggedPositions[d.key] = d3.event.x
@@ -413,9 +415,9 @@ let GroupBarChartView = function(targetID) {
 	function getMaxGroupOfSelectedSubtype(grp) {
 		if (self.selectedGroups.includes(grp)) {
 			var filteredData = self.data.filter(d => self.selectedGroups.includes(d.State));
-			return filteredData[d3.maxIndex(filteredData, d => d[self.selectedSubType])].State;
+			return filteredData[d3.maxIndex(filteredData, d => +d[self.selectedSubType])].State;
 		} else {
-			return self.data[d3.maxIndex(self.data, d => d[self.selectedSubType])].State;
+			return self.data[d3.maxIndex(self.data, d => +d[self.selectedSubType])].State;
 		}
 	}
 

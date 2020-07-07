@@ -42,7 +42,7 @@ var App = App || {};
 
 				instructionsText += '<li>Drag a bar or a group (using group label) to reposition it. </li>'
 				instructionsText += '<li><B>Soritng a group:</B> In a group, drag the tallest bar to right/left most boundary to sort the group in ascending/descending order.</li>';
-				instructionsText += '<li><B>Selections:</B> Double click a bar to select it along with all the same type bars across the groups.' 
+				instructionsText += '<li><B>Selections:</B> Click a bar to select it along with all the same type bars across the groups.' 
 				instructionsText += 'Click on the group titles to select entire group. Click any where else to clear the selection. Use the tallest bar in the selection to reorder only the selected bars.</li>';	
 
 				if (App.views.groupBarChartView)
@@ -74,7 +74,7 @@ var App = App || {};
 				
 				instructionsText += '<li>Drag a bar directly to reposition it. </li>'
 				instructionsText += '<li><B>Soritng:</B> Drag the tallest bar to right/left most boundary to sort in ascending/descending order.</li>';
-				instructionsText += '<li><B>Selections:</B> Double click a bar to select it. Click any where else to clear the selection. Use the tallest bar in the selection to reorder only the selected bars.</li>';		
+				instructionsText += '<li><B>Selections:</B> Click a bar to select it. Click any where else to clear the selection. Use the tallest bar in the selection to reorder only the selected bars.</li>';		
 
 				if (App.views.simpleBarChartView)
 					App.views.simpleBarChartView.data(App.models.data.getSimpleBarChartData()).draw();
