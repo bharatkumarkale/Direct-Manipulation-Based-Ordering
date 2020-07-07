@@ -1,9 +1,9 @@
-// View to handle creation of a matrix plot and the interactions on it
+// View to handle creation of a bar chart and the interactions on it
 
 /* Authors: Bharat Kale <bkale@niu.edu>
 			
    Version: 1.0.0
-   Date: 04-15-2020
+   Date: 04-10-2020
 */
 "use strict"
 
@@ -144,6 +144,7 @@ let MatrixView = function(targetID) {
 				.on("start", self.order.dragColLabelsStarted)
 				.on("drag", self.order.draggedColLabels)
 				.on("end", self.order.dragColLabelsEnded));
+			
 		colLabelsG.selectAll(".col_label")
 			.data([... new Set(self.data.map(d => d[self.column]))])
 			.enter().append("text")
@@ -169,36 +170,38 @@ let MatrixView = function(targetID) {
 					.setColLabelClass("col_label")
 					.setCellClass("grid_cell")
 					.setColumnLabelRotation(self.colLableAngle);
-
 	}
 
-	//////////////////// Private Methods ////////////////////
+	function clear() {
+		document.getElementById(targetID.slice(1)).innerHTML = '';
+	}
+
 
 	function initTarget() {
 		self.target = d3.select(self.targetID);
 
-        self.totalWidth = self.target.node().getBoundingClientRect().width;
-        self.totalHeight = self.target.node().getBoundingClientRect().height;
-        
-        self.margin = {
-                'left':self.totalWidth*0.15, 
-                'right':self.totalWidth*0.05, 
-                'top':self.totalHeight*0.32, 
-                'bottom':self.totalHeight*0.05
-              };
+		self.totalWidth = self.target.node().getBoundingClientRect().width;
+		self.totalHeight = self.target.node().getBoundingClientRect().height;
 
-        self.width = self.totalWidth-self.margin.left-self.margin.right;
-        self.height = self.totalHeight-self.margin.top-self.margin.bottom;
+		self.margin = {
+			'left':self.totalWidth*0.15, 
+			'right':self.totalWidth*0.05, 
+			'top':self.totalHeight*0.32, 
+			'bottom':self.totalHeight*0.05
+		};
 
-        self.targetSvg = self.target.append("svg")
-            .attr("shape-rendering", "geometricPrecision")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("width", self.totalWidth)
-            .attr("height", self.totalHeight);
+		self.width = self.totalWidth-self.margin.left-self.margin.right;
+		self.height = self.totalHeight-self.margin.top-self.margin.bottom;
 
-        self.targetEle = self.targetSvg.append("g")
-                			.attr("transform", "translate(" + self.margin.left + "," + self.margin.top + ")");
+		self.targetSvg = self.target.append("svg")
+							.attr("shape-rendering", "geometricPrecision")
+							.attr("x", 0)
+							.attr("y", 0)
+							.attr("width", self.totalWidth)
+							.attr("height", self.totalHeight);
+
+		self.targetEle = self.targetSvg.append("g")
+							.attr("transform", "translate(" + self.margin.left + "," + self.margin.top + ")");
 	}
 
 	function format(str) {
@@ -207,6 +210,7 @@ let MatrixView = function(targetID) {
 
 	return{
 		data,
-		draw
+		draw,
+		clear,
 	};
 }

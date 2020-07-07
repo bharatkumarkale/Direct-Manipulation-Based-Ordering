@@ -4,12 +4,13 @@ var App = App || {};
 
 let DataModel = function() {
     let self = {
-        barData: [],
+        simpleBarData: [],
+        groupedBarData: [],
         matrixData: [],
     };
 
     // Method that handles loading the dataset
-    function loadBarChartData() {
+    function loadSimpleBarChartData() {
         return d3.tsv("./data/alphabets.tsv", {credentials: 'same-origin'})
             .then(r => {
                 self.barData = r;
@@ -17,8 +18,8 @@ let DataModel = function() {
     }
 
     // Method that returns the dataset to caller
-    function getBarChartData() {
-        return self.barData;
+    function getSimpleBarChartData() {
+        return deepCopy(self.barData);
     }
 
     // Method that handles loading the dataset
@@ -31,13 +32,38 @@ let DataModel = function() {
 
     // Method that returns the dataset to caller
     function getMatrixData() {
-        return self.matrixData;
+        return deepCopy(self.matrixData);
+    }
+
+    // Method that handles loading the dataset
+    function loadGroupedBarChartData() {
+        return d3.csv("./data/groupedData.csv", {credentials: 'same-origin'})
+            .then(r => {
+                self.groupedBarData = r;
+            });
+    }
+
+    // Method that returns the dataset to caller
+    function getGroupedBarChartData() {
+        return deepCopy(self.groupedBarData);
+    }
+
+    function deepCopy(obj) {
+        var output, v, key;
+        output = Array.isArray(obj) ? [] : {};
+        for (key in obj) {
+            v = obj[key];
+            output[key] = (typeof v === "object") ? deepCopy(v) : v;
+        }
+        return output;
     }
 
     return {
-        loadBarChartData,
-        getBarChartData,
+        loadSimpleBarChartData,
+        getSimpleBarChartData,
         loadMatrixData,
         getMatrixData,
+        loadGroupedBarChartData,
+        getGroupedBarChartData,
     };
 }

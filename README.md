@@ -1,9 +1,10 @@
-# Direct Manipulation based Re-ordering
+# Evaluate interactive Re-ordering method
 
-A dashboard to demonstrate the proposed direct manipulation based reordering in bar charts and matrix visualization.
+A Tool to demonstrate and evaluate the proposed interactive reordering method based on direct manipulation. The tool allows evaluation on 2 types of vissualizations: 
+1. bar charts
+2. matrix visualization.
 
-### Intial view of the dashboard
+### Steps
 
-![Dashboard][logo]
-
-[logo]: ./Images_Paper/DirectReordering.png "Dashboard to present the proposed technique"
+1. The initial view presents options for the user to choose which chart and what dataset to use.
+2. Based on the options chosen corresponding visualizations supporting the proposed interaction are loaded for the user to play and provide feedback.

@@ -39,6 +39,14 @@ let GroupBarChartView = function(targetID) {
 		subTypeSelected: false,
 		selectedSubType: '',
 		selectedGroups: [],
+		minPositionGroups: 0,
+		maxPositionGroups: 0,
+
+		barsInAGroupDraggedPositions: {},
+		selectedGroupData: null,
+		minPositionInGroup: 0,
+		maxPositionInGroup: 0,
+		xScaleBarDrag: d3.scaleBand().padding(0.05),
 	}
 
 	init();
@@ -86,17 +94,24 @@ let GroupBarChartView = function(targetID) {
 					}
 				})
 				.on('click', function(d) {
-					self.subTypeSelected = true;
-					if (self.subTypeSelected) {
-						self.selectedSubType = d.key;
-					} else {
-						self.selectedSubType = '';
-					}
+					console.log(d3.event.defaultPrevented);
+					if (!d3.event.defaultPrevented) {
+						self.subTypeSelected = true;
+						if (self.subTypeSelected) {
+							self.selectedSubType = d.key;
+						} else {
+							self.selectedSubType = '';
+						}
 
-					self.targetEle.selectAll(`.bar`).classed("selectedBar", false);
-					self.targetEle.selectAll(`.key_${format(d.key)}`).classed("selectedBar", true);
-					d3.event.preventDefault();
-				});
+						self.targetEle.selectAll(`.bar`).classed("selectedBar", false);
+						self.targetEle.selectAll(`.key_${format(d.key)}`).classed("selectedBar", true);
+						d3.event.preventDefault();
+					}
+				})
+				.call(d3.drag()
+					.on("start", barDragstarted)
+					.on("drag", barDragged)
+					.on("end", barDragended));
 
 		self.xAxis = self.targetSvg.append('g')
 						.attr("transform", `translate(${self.margin.left},${self.totalHeight - self.margin.bottom*0.95})`)
@@ -239,24 +254,24 @@ let GroupBarChartView = function(targetID) {
 
 		if (self.selectedGroups.includes(d)) {
 			self.selectedGroups.sort((a, b) => self.xScaleGroup(a)-self.xScaleGroup(b));
-			self.maxPosition = self.xScaleGroup(self.selectedGroups[self.selectedGroups.length-1])+self.xScaleGroup.bandwidth()
-			self.minPosition = self.xScaleGroup(self.selectedGroups[0])
+			self.maxPositionGroups = self.xScaleGroup(self.selectedGroups[self.selectedGroups.length-1])+self.xScaleGroup.bandwidth()
+			self.minPositionGroups = self.xScaleGroup(self.selectedGroups[0])
 		} else {
-			self.maxPosition = self.xScaleGroup.range()[1]
-			self.minPosition = self.xScaleGroup.range()[0]
+			self.maxPositionGroups = self.xScaleGroup.range()[1]
+			self.minPositionGroups = self.xScaleGroup.range()[0]
 		}
 
-		self.minPosition -= self.xScaleGroup.padding()*self.xScaleGroup.bandwidth();
-		self.maxPosition += self.xScaleGroup.padding()*self.xScaleGroup.bandwidth();
+		self.minPositionGroups -= self.xScaleGroup.padding()*self.xScaleGroup.bandwidth();
+		self.maxPositionGroups += self.xScaleGroup.padding()*self.xScaleGroup.bandwidth();
 
 		self.targetEle.append("path")
-			.datum([[self.minPosition, self.yScale.range()[0]],
-					[self.minPosition, 0]])
+			.datum([[self.minPositionGroups, self.yScale.range()[0]],
+					[self.minPositionGroups, 0]])
 			.attr("d", line)
 			.attr("class", "boundary")
 		self.targetEle.append("path")
-			.datum([[self.maxPosition, self.yScale.range()[0]],
-					[self.maxPosition, 0]])
+			.datum([[self.maxPositionGroups, self.yScale.range()[0]],
+					[self.maxPositionGroups, 0]])
 			.attr("d", line)
 			.attr("class", "boundary")
 
@@ -267,7 +282,7 @@ let GroupBarChartView = function(targetID) {
 
 	function groupDragged(d) {
 		var curX = d3.event.x-self.margin.left;
-		if (curX<self.maxPosition && curX>self.minPosition) {
+		if (curX<self.maxPositionGroups && curX>self.minPositionGroups) {
 			self.groupDraggedPositions[d] = d3.event.x-self.margin.left-self.xScaleGroup.bandwidth()/2;
 			self.data.sort((a, b) => groupPosition(a.State) - groupPosition(b.State));
 			self.xScaleGroup.domain(self.data.map(d => d.State))
@@ -288,9 +303,9 @@ let GroupBarChartView = function(targetID) {
 				.attr("transform", d => `translate(${groupPosition(d.State)},0)`)
 
 		if (self.subTypeSelected && d==getMaxGroupOfSelectedSubtype(d)) {
-			if (curX>self.maxPosition) { 
+			if (curX>self.maxPositionGroups) { 
 				sortAndUpdateGroups(d, false);
-			} else if (curX<self.minPosition) { 
+			} else if (curX<self.minPositionGroups) { 
 				sortAndUpdateGroups(d, true);
 			}
 		}
@@ -306,11 +321,82 @@ let GroupBarChartView = function(targetID) {
 				.duration(500)
 				.attr("x", d => self.margin.left+self.xScaleGroup(d)+self.xScaleGroup.bandwidth()/2);
 
+		self.targetEle.selectAll(".boundary")
+			.transition()
+				.duration(200) 
+				.remove();
+	}
+
+	function barDragstarted(d) {
+		var xScaleDomain = self.xScaleBar.domain(),
+			grp = d.group,
+			line = d3.line().x(d => d[0]).y(d => d[1]),
+			buffer = self.xScaleBar.padding()*self.xScaleBar.bandwidth();
+
+		self.xScaleBarDrag.range(self.xScaleBar.range()).domain(self.xScaleBar.domain());
+
+		
+		self.maxPositionInGroup = buffer + self.xScaleGroup(grp)+self.xScaleGroup.bandwidth()
+		self.minPositionInGroup = buffer + self.xScaleGroup(grp)
+
+		self.targetEle.append("path")
+			.datum([[self.minPositionInGroup, self.yScale.range()[0]+self.margin.top],
+					[self.minPositionInGroup, self.margin.top]])
+			.attr("d", line)
+			.attr("class", "boundary")
+		self.targetEle.append("path")
+			.datum([[self.maxPositionInGroup, self.yScale.range()[0]+self.margin.top],
+					[self.maxPositionInGroup, self.margin.top]])
+			.attr("d", line)
+			.attr("class", "boundary")
+
+		self.minPositionInGroup -= self.xScaleBarDrag.bandwidth()+buffer;
+		self.barsInAGroupDraggedPositions[d.key] = self.xScaleBarDrag(d.key)
+		d3.select(this).raise().classed("barActive", true);
+
+		console.log(self.barsInAGroupDraggedPositions);
+	}
+
+	function barDragged(d) {
+		var curPosX = d3.event.x+self.xScaleGroup(d.group);
+
+		if (curPosX<self.maxPositionInGroup && curPosX>self.minPositionInGroup) {
+			self.barsInAGroupDraggedPositions[d.key] = d3.event.x
+			self.keys.sort((a, b) => barPosition(a) - barPosition(b))
+			self.xScaleBarDrag.domain(self.keys)
+	
+			self.targetEle.selectAll(`.${format(d.group)} > rect`)
+				.attr("x", d => barPosition(d.key));
+
+			d3.select(this).attr("x", d3.event.x);
+		}
+	}
+
+	function barDragended(d) {
+		var curPosX = d3.event.x+self.xScaleGroup(d.group);
+		delete self.barsInAGroupDraggedPositions[d.key];
+		self.selectedGroupData = self.data.filter(a => a.State==d.group)[0];
+		
+		d3.select(this).transition()
+			.duration(500)
+			.attr("x", d => barPosition(d.key));
+		d3.select(this).classed("barActive", false);
+
+		if (curPosX>self.maxPositionInGroup) { 
+			d3.select(this).select('rect').classed("mouseOver", false);
+			sortAndUpdateRects(d, false);
+		} else if (curPosX<self.minPositionInGroup) { 
+			d3.select(this).select('rect').classed("mouseOver", false);
+			sortAndUpdateRects(d, true);
+		}
 
 		self.targetEle.selectAll(".boundary")
 			.transition()
-				.duration(500) 
+				.duration(100) 
 				.remove();
+		
+		self.selectedGroupData=null;
+		self.barsInAGroupDraggedPositions={};
 	}
 
 	/////// Helper method to determine x position of a group /////// 
@@ -355,6 +441,33 @@ let GroupBarChartView = function(targetID) {
 
 		self.xScaleGroup.domain(self.data.map(d => d.State));
 
+	}
+
+	/////// Helper method to determine x position of a bar in a group /////// 
+	function barPosition(d) {
+		var newP = self.barsInAGroupDraggedPositions[d];
+		return newP == null ? self.xScaleBarDrag(d) : newP;
+	}
+
+	function sortAndUpdateRects(curNode, asc) {
+		var values = self.keys.map(d => {
+			if (d in self.selectedGroupData) {
+				return +self.selectedGroupData[d]
+			}
+		})
+
+		if (curNode.value==d3.max(values)) {
+			if (asc) {
+				self.keys.sort((a, b) => self.selectedGroupData[b]-self.selectedGroupData[a])
+			} else {
+				self.keys.sort((a, b) => self.selectedGroupData[a]-self.selectedGroupData[b])
+			}
+			
+			self.xScaleBarDrag.domain(self.keys);
+			self.targetEle.selectAll(`.${format(curNode.group)} > rect`)
+				.transition().duration(1000)
+					.attr("x", d => self.xScaleBarDrag(d.key));
+		}
 	}
 
 	return{

@@ -204,7 +204,7 @@ let SimpleBarChartOrdering = function() {
 
 		self.targetEle.selectAll(".boundary")
 			.transition()
-				.duration(500) 
+				.duration(200) 
 				.remove();
 	}
 

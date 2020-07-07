@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Reordering using Direct Manipulation</title>
+	<link rel="stylesheet" href="css/style.css">
+
+  	<script src="https://d3js.org/d3.v5.min.js"></script>
+  	<script src="https://d3js.org/d3-array.v2.min.js"></script>
+	<script src="js/model/dataModel.js" charset="UTF-8"></script>
+	<script src="js/view/barChart.js" charset="UTF-8"></script>
+	<script src="js/viewmodel/barChartOrdering.js" charset="UTF-8"></script>
+	<script src="js/view/matrixVis.js" charset="UTF-8"></script>
+	<script src="js/viewmodel/matrixVisOrdering.js" charset="UTF-8"></script>
+	<script src="js/main.js"></script>
+  	
+</head>
+<body onload="App.init()">
+	<div id="visTitle"> Direct Manipulation based Re-Ordering </div>
+	<div id="visPane">
+		<div id="barChartPane">
+			<div id="barChartDesc" class="description">
+		    	<p ID='para_Description'>
+					<label id='lblDescription'>Bar Chart:</label><br><br>
+					1. Drag a rectangle in any direction to change it's x position and hence order the rectangles in any way.<br>
+					2. To easily sort all the rectangles,<br>
+					&emsp;<u>Ascending order:</u> Drag the longest rectangle beyond the right most boundary.<br>
+					&emsp;<u>Descending order:</u> Drag the longest rectangle beyond the left most boundary.<br>
+				</p>
+			</div>
+			<div id="barChartContent" class="content"></div>
+		</div>
+		<div id="matrixVisPane">
+			<div id="matrixVisDesc" class="description">
+		    	<p ID='para_Description'>
+					<label id='lblDescription'>Matrix Visualization:</label><br><br>
+					1. Click on a row/column header to sort the matrix by the row/column correspondingly in ascending order.<br>
+					<!-- &emsp;&emsp;-&emsp;Clicking the header again toggle between ascending and descending order.<br> -->
+					2. Click and drag a cell horizontally/vertically to reposition an entire column/row.<br>
+					3. Partially sort a matrix by using a line gesture along a row/column header.<br>
+				</p>
+			</div>
+			<div id="matrixVisContent" class="content"></div>
+		</div>
+	</div>
+</body>
+</html>
