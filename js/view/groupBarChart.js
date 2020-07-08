@@ -309,9 +309,7 @@ let GroupBarChartView = function(targetID) {
 				.duration(500)
 				.attr("transform", d => `translate(${groupPosition(d.State)},0)`)
 
-console.log(self.subTypeSelected, getMaxGroupOfSelectedSubtype(d))
 		if (self.subTypeSelected && d==getMaxGroupOfSelectedSubtype(d)) {
-			console.log("sorted order:")
 			if (curX>self.maxPositionGroups) { 
 				sortAndUpdateGroups(d, false);
 			} else if (curX<self.minPositionGroups) { 

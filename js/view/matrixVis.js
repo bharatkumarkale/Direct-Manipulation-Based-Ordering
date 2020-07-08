@@ -32,6 +32,11 @@ let MatrixView = function(targetID) {
 
 		colLableAngle: -90,
 		order: null,
+
+		line: d3.line().x(d => d[0]).y(d => d[1]),
+		keep: false,
+		startPoint: [],
+		path: null,
 	}
 
 	init();
@@ -114,6 +119,27 @@ let MatrixView = function(targetID) {
 			.attr('width', self.margin.left)
 			.attr('height', self.height)
 			.style('fill', 'black')
+			// .call(d3.drag()
+			// 	.on('start', () => { 
+			// 			self.keep = true;
+			// 			self.startPoint = [d3.event.x, d3.event.y];
+			// 			self.path = rowLabelsG
+			// 						.append('path')
+			// 						.datum([self.startPoint, self.startPoint])
+			// 						.attr('d', self.line)
+			// 						.style('stroke', 'orange')
+			// 						.style('stroke-width', '2px');
+			// 		})
+			// 	.on('end', () => { 
+			// 			self.keep = false; 
+			// 		})
+			// 	.on('drag', () => { 
+			// 		if (self.keep) {
+			// 			var newLine = self.line([self.startPoint, [self.startPoint[0], d3.event.y]]);
+			// 			rowLabelsG.select('path').attr('d', newLine);
+			// 		}
+			// 	})
+			// );
 			.call(d3.drag()
 				.on("start", self.order.dragRowLabelsStarted)
 				.on("drag", self.order.draggedRowLabels)

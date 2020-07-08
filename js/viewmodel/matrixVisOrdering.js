@@ -33,6 +33,7 @@ let MatrixVisOrdering = function() {
 		selectedColLabels: new Set(),
 		selectedRowLabels: new Set(),
 
+		isDragged: false,
 		draggedPositions: {},
 		dragStartPosition: [],
 		dragDirection: '',
@@ -174,11 +175,13 @@ let MatrixVisOrdering = function() {
 	}
 
 	function dragRowLabelsStarted() {
+		self.isDragged = false;
 		self.yScale.domain().forEach(d => self.yScaleReverse[d]=[self.yScale(d), self.yScale(d)+self.yScale.bandwidth()]);
 		// draggedRowLabels();
 	}
 
 	function draggedRowLabels() {
+		self.isDragged = true;
 		for (var key in self.yScaleReverse) {
 			if (self.yScaleReverse[key][0] <= d3.event.y && d3.event.y <= self.yScaleReverse[key][1]) {
 				d3.select(`#row_${format(key)}`).classed('selectedLabel', true);				
@@ -188,27 +191,31 @@ let MatrixVisOrdering = function() {
 	}
 
 	function dragRowLabelsEnded() {
-		var subsetKeys = getOptimalOrder(self.selectedRowLabels, 'row'),
-			sortedKeys = [],
-			i = 0;
-		for (var key in self.yScaleReverse) {
-			if (subsetKeys.includes(key)) {
-				sortedKeys.push(subsetKeys[i]);
-				++i;
-			} else {
-				sortedKeys.push(key);
+		if (self.isDragged) {
+			var subsetKeys = getOptimalOrder(self.selectedRowLabels, 'row'),
+				sortedKeys = [],
+				i = 0;
+			for (var key in self.yScaleReverse) {
+				if (subsetKeys.includes(key)) {
+					sortedKeys.push(subsetKeys[i]);
+					++i;
+				} else {
+					sortedKeys.push(key);
+				}
 			}
+			self.yScale.domain(sortedKeys);
+			updateMatrix();		
 		}
-		self.yScale.domain(sortedKeys);
-		updateMatrix();		
 	}
 
 	function dragColLabelsStarted() {	
+		self.isDragged = false;
 		self.xScale.domain().forEach(d => self.xScaleReverse[d]=[self.xScale(d), self.xScale(d)+self.xScale.bandwidth()]);	
 		// draggedColLabels();
 	}
 
-	function draggedColLabels() {	
+	function draggedColLabels() {
+		self.isDragged = true;	
 		for (var key in self.xScaleReverse) {
 			if (self.xScaleReverse[key][0] <= d3.event.x && d3.event.x <= self.xScaleReverse[key][1]) {
 				self.targetEle.select(`#col_${format(key)}`).classed('selectedLabel', true);
@@ -218,19 +225,21 @@ let MatrixVisOrdering = function() {
 	}
 
 	function dragColLabelsEnded() {
-		var subsetKeys = getOptimalOrder(self.selectedColLabels, 'column'),
-			sortedKeys = [],
-			i = 0;
-		for (var key in self.xScaleReverse) {
-			if (subsetKeys.includes(key)) {
-				sortedKeys.push(subsetKeys[i]);
-				++i;
-			} else {
-				sortedKeys.push(key);
+		if (isDragged) {
+			var subsetKeys = getOptimalOrder(self.selectedColLabels, 'column'),
+				sortedKeys = [],
+				i = 0;
+			for (var key in self.xScaleReverse) {
+				if (subsetKeys.includes(key)) {
+					sortedKeys.push(subsetKeys[i]);
+					++i;
+				} else {
+					sortedKeys.push(key);
+				}
 			}
+			self.xScale.domain(sortedKeys);
+			updateMatrix();
 		}
-		self.xScale.domain(sortedKeys);
-		updateMatrix();
 	}
 
 	
