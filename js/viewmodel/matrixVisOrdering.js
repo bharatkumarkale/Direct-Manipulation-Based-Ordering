@@ -225,7 +225,7 @@ let MatrixVisOrdering = function() {
 	}
 
 	function dragColLabelsEnded() {
-		if (isDragged) {
+		if (self.isDragged) {
 			var subsetKeys = getOptimalOrder(self.selectedColLabels, 'column'),
 				sortedKeys = [],
 				i = 0;
