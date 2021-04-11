@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 	<title>Reordering using Direct Manipulation</title>
-	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/style_dark.css">
+	<link rel="stylesheet" href="css/style_light.css">
 
   	<script src="https://d3js.org/d3.v5.min.js"></script>
   	<script src="https://d3js.org/d3-array.v2.min.js"></script>
@@ -17,14 +18,14 @@
   	
 </head>
 <body onload="App.init()">
-	<div id="titlePane"> Direct Manipulation based Re-Ordering </div>
+	<div id="titlePane"> Direct Ordering </div>
 	<div id="optionsPane">
 		<label for="demos">Choose a Demo:</label>
 
 		<select name="demos" id="demos" onchange="App.onDemoSelectionChange('demos', 'taskDescText', 'taskInstructionsText')">
-			<option value="simplebar">Demo using a Simple Barchart</option>
-			<option value="groupedbar">Demo using a Grouped Barchart</option>
-			<option value="matrix">Demo using a Matrix Visualization</option>
+			<option value="simplebar">Simple Barchart</option>
+			<option value="groupedbar">Grouped Barchart</option>
+			<option value="matrix">Matrix Visualization</option>
 		</select>
 	</div>
 	<div id="visPane">

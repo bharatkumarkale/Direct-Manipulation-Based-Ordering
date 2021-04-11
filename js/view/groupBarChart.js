@@ -24,9 +24,13 @@ let GroupBarChartView = function(targetID) {
 		targetEle: null,
 
 		xScaleGroup: d3.scaleBand().paddingInner(0.1),
-		xScaleBar: d3.scaleBand().padding(0.05),
+		xScaleBar: d3.scaleBand().padding(0.1),
 		yScale: d3.scaleLinear(),
-		colorScale: d3.scaleOrdinal().range(['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84']),
+		colorScale: d3.scaleOrdinal()
+						.range(['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84']),
+							//['#fef0d9','#fdd49e','#fdbb84','#fc8d59','#ef6548','#d7301f','#990000']),
+			// ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84']),
+			// ['#f8fcff', '#e5f4fe', '#d2edfd', '#bfe5fc', '#adddfc', '#9ad6fb', '#87cefa']),
 			// ['#8dd3c7','#ffffb3','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69']),
 		xAxis: null,
 		yAxis: null,
@@ -94,6 +98,7 @@ let GroupBarChartView = function(targetID) {
 				.attr("height", d => { return self.height - self.yScale(d.value); })
 				.attr("class", d => `group_${format(d.group)} key_${format(d.key)} bar`)
 				.attr("fill", d => self.colorScale(d.key))
+				.attr("stroke", 'lightgray')
 				.on('mouseover', function(d) {
 					d3.select(this).classed("mouseOver", true);
 				})
@@ -163,11 +168,11 @@ let GroupBarChartView = function(targetID) {
 						.on("end", groupDragended));
 
 		self.yAxis = self.targetSvg.append("g")
-						.attr("transform", `translate(${self.margin.left*0.6},${self.margin.top})`)
+						.attr("transform", `translate(${self.margin.left*0.7},${self.margin.top})`)
 						.attr("class", "axis y")
 						.call(d3.axisLeft(self.yScale).ticks(null, "s"))
 						.append("text")
-							.attr("x", -self.margin.left*0.8)
+							.attr("x", -self.margin.left*0.3)
 							.attr("y", -self.margin.top/2)
 							.attr("class", "axisLabel")
 							.attr("fill", "currentColor")
@@ -190,7 +195,7 @@ let GroupBarChartView = function(targetID) {
         self.margin = {
                 'left':self.totalWidth*0.1, 
                 'right':self.totalWidth*0.05, 
-                'top':self.totalHeight*0.05, 
+                'top':self.totalHeight*0.1, 
                 'bottom':self.totalHeight*0.15
               };
 
@@ -240,6 +245,7 @@ let GroupBarChartView = function(targetID) {
 			.attr("x", self.width - 19)
 			.attr("width", 19)
 			.attr("height", 19)
+			.attr("stroke", "lightgray")
 			.attr("fill", self.colorScale);
 
 		legend.append("text")
@@ -347,13 +353,13 @@ let GroupBarChartView = function(targetID) {
 		self.minPositionInGroup = buffer + self.xScaleGroup(grp)
 
 		self.targetEle.append("path")
-			.datum([[self.minPositionInGroup, self.yScale.range()[0]+self.margin.top],
-					[self.minPositionInGroup, self.margin.top]])
+			.datum([[self.minPositionInGroup, self.yScale.range()[0]],
+					[self.minPositionInGroup, 0]])
 			.attr("d", line)
 			.attr("class", "boundary")
 		self.targetEle.append("path")
-			.datum([[self.maxPositionInGroup, self.yScale.range()[0]+self.margin.top],
-					[self.maxPositionInGroup, self.margin.top]])
+			.datum([[self.maxPositionInGroup, self.yScale.range()[0]],
+					[self.maxPositionInGroup, 0]])
 			.attr("d", line)
 			.attr("class", "boundary")
 
@@ -469,7 +475,8 @@ let GroupBarChartView = function(targetID) {
 			}
 			
 			self.xScaleBarDrag.domain(self.group_sortedKeys[curNode.group]);
-			self.targetEle.selectAll(`.${format(curNode.group)} > rect`)
+			// self.targetEle.selectAll(`.${format(curNode.group)} > rect`)
+			self.targetEle.selectAll(`.group > rect`)
 				.transition().duration(1000)
 					.attr("x", d => self.xScaleBarDrag(d.key));
 		}

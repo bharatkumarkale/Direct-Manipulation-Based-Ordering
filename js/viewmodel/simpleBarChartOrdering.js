@@ -34,6 +34,7 @@ let SimpleBarChartOrdering = function() {
 
 		maxPosition:0,
 		minPosition:0,
+		temp:false,
 	};
 
 	function setTargetId(id) {
@@ -117,7 +118,7 @@ let SimpleBarChartOrdering = function() {
 	function dragstarted(d) {
 		var xScaleDomain = self.xScale.domain(),
 			line = d3.line().x(d => d[0]).y(d => d[1]);
-
+self.temp = false;
 		if (self.selectedBars.includes(d)) {
 			self.selectedBars.sort((a,b) => self.xScale(a[self.xAttr]) - self.xScale(b[self.xAttr]));
 			for (var i = 0; i < self.selectedBars.length-1; i++) {
@@ -157,6 +158,7 @@ let SimpleBarChartOrdering = function() {
 	}
 
 	function dragged(d) {
+		self.temp = true;
 		if (d3.event.x<self.maxPosition && d3.event.x>self.minPosition) {
 			d3.select(this).raise().classed("barActive", true);
 			self.draggedPositions[d[self.xAttr]] = Math.min(self.xScale.range()[1], Math.max(0, d3.event.x))
@@ -203,10 +205,13 @@ let SimpleBarChartOrdering = function() {
 		// 	});
 		// }
 
-		self.targetEle.selectAll(".boundary")
+// if (!self.temp) {
+	self.targetEle.selectAll(".boundary")
 			.transition()
 				.duration(200) 
 				.remove();
+// }
+		
 	}
 
 	/////// Helper method to determine x position of a given rectangle /////// 

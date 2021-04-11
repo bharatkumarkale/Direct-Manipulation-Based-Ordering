@@ -87,12 +87,12 @@ let SimpleBarChartView = function(targetID) {
 								.on("drag", self.order.dragged)
 								.on("end", self.order.dragended));
 
-		self.targetSvg.append('rect')
-			.attr('x', self.margin.left)
-			.attr('y', self.totalHeight - self.margin.bottom*0.95)
-			.attr('width', self.width)
-			.attr('height', self.margin.bottom)
-			.style('fill', 'black');
+		// self.targetSvg.append('rect')
+		// 	.attr('x', self.margin.left)
+		// 	.attr('y', self.totalHeight - self.margin.bottom*0.95)
+		// 	.attr('width', self.width)
+		// 	.attr('height', self.margin.bottom)
+		// 	.style('fill', 'black');
 
 		self.xAxis = self.targetSvg.append('g')
 						.attr("transform", `translate(${self.margin.left},${self.totalHeight - self.margin.bottom*0.95})`)
@@ -126,7 +126,7 @@ let SimpleBarChartView = function(targetID) {
 						.attr('class', 'axis y')
 						.call(d3.axisLeft(self.yScale).ticks(null, '%'))
 						.append("text")
-							.attr("x", -self.margin.left*0.8)
+							.attr("x", -self.margin.left*0.4)
 							.attr("y", -self.margin.top/2)
 							.attr("class", "axisLabel")
 							.attr("fill", "currentColor")
@@ -157,7 +157,7 @@ let SimpleBarChartView = function(targetID) {
         self.margin = {
                 'left':self.totalWidth*0.1, 
                 'right':self.totalWidth*0.05, 
-                'top':self.totalHeight*0.05, 
+                'top':self.totalHeight*0.1, 
                 'bottom':self.totalHeight*0.15
               };
 

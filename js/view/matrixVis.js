@@ -212,8 +212,8 @@ let MatrixView = function(targetID) {
 		self.margin = {
 			'left':self.totalWidth*0.15, 
 			'right':self.totalWidth*0.05, 
-			'top':self.totalHeight*0.32, 
-			'bottom':self.totalHeight*0.05
+			'top':self.totalHeight*0.35, 
+			'bottom':self.totalHeight*0.02
 		};
 
 		self.width = self.totalWidth-self.margin.left-self.margin.right;

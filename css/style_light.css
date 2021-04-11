@@ -1,0 +1,187 @@
+html, body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	background-color: #000;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+ 	font-family: "Arial";
+}
+
+#titlePane {
+	font-size: 42px;
+	color: #fc8d62;
+	width: 99%;
+	height: 8%;
+	font-weight: bold;
+	text-align: center;
+ 	text-decoration: underline;
+ 	padding-top: 1%;
+ 	margin-left: 0.5%;
+}
+
+#optionsPane {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	width: 99%;
+	height: 5%;
+ 	margin-left: 0.5%;
+ 	font-size: 20px;
+}
+
+label {
+	color: white;
+	padding-right: 10px;
+}
+
+#demos {
+	font-size: 18px;
+}
+
+#visPane {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	width: 99%;
+	height: 85%;
+	border: 1px solid #fff;
+ 	margin-left: 0.5%;
+	background-color: white;
+}
+
+#descriptionPane {
+	display: flex;
+	flex-direction: column;
+	justify-content: normal;
+	align-items: flex-start;
+	width: 25%;
+	height: 100%;
+	background-color: lightgray;
+}
+
+.subheader {
+	font-size: 18px;
+	font-weight: bold;
+	color: black;
+	margin-left: 5px;
+	margin-top: 10px;
+	text-decoration: underline;
+}
+
+.taskText {
+	font-size: 14px;
+	color: black;
+	margin-left: 5px;
+}
+
+#displayPane {
+	width: 75%;
+	height: 100%;
+}
+
+.barRect {
+	fill: #cfe2f3; /*#66c2a5*/
+	stroke: #bfbfbf;
+	opacity: 100%;
+	/*stroke-width: 0.5;*/
+}
+
+.barActive, .mouseOver {
+	fill: #87bbfa;
+	stroke: #404040;
+	opacity: 90%;
+	cursor: move;
+}
+
+.barSemiActive {
+	fill: #87c4fa;
+	stroke: #404040;
+	/*opacity: 0.7;*/
+}
+
+.selectedBar {
+	fill: #87c4fa;
+	stroke: #404040;
+}
+
+.selectedGroupBar {
+	stroke: #404040;
+	/*stroke-width: 2;*/
+}
+
+.dragGroup {
+	stroke: #404040;
+	/*stroke-width: 2;*/
+}
+
+.mouseOverClick {
+	cursor: default;
+}
+
+.axis {
+	color: gray;
+	font-size: 12px;
+ 	font-family: "Arial";
+}
+
+.x_tick {
+	fill: gray;
+	font-size: 12px;
+	text-anchor: middle;
+ 	font-family: "Arial";
+}
+
+.axisLabel {
+	font-size: 18px;
+	color: #000;
+ 	font-family: "Arial";
+}
+
+.row_label {
+	font-size: 13px;
+	fill: #000;
+	text-anchor: end;
+	alignment-baseline: central;
+ 	font-family: "Arial";
+}
+
+.col_label {
+	font-size: 13px;
+	fill: #000;
+ 	font-family: "Arial";
+ 	text-anchor: start;
+	alignment-baseline: central;
+}
+
+.cell_label {
+	font-size: 8px;
+	alignment-baseline: central;
+	text-anchor: middle;
+ 	font-family: "Arial";
+}
+
+.grid_cell {
+	fill: #87c4fa;
+	stroke: none;
+}
+
+.selectedLabel {
+	font-size: 13px;
+	fill: black;
+	font-weight: bold;
+	font-style: italic;
+}
+
+.boundary {
+	fill: none;
+	stroke: black;
+	stroke-width: 1;
+	stroke-dasharray: 3; 
+}

@@ -60,7 +60,7 @@ label {
 	flex-direction: column;
 	justify-content: normal;
 	align-items: flex-start;
-	width: 25%;
+	width: 20%;
 	height: 100%;
 	background-color: lightgray;
 }
@@ -81,7 +81,7 @@ label {
 }
 
 #displayPane {
-	width: 75%;
+	width: 80%;
 	height: 100%;
 }
 
@@ -138,7 +138,7 @@ label {
 }
 
 .row_label {
-	font-size: 15px;
+	font-size: 13px;
 	fill: #fff;
 	text-anchor: end;
 	alignment-baseline: central;
@@ -146,7 +146,7 @@ label {
 }
 
 .col_label {
-	font-size: 15px;
+	font-size: 13px;
 	fill: #fff;
  	font-family: "Arial";
  	text-anchor: start;
@@ -166,7 +166,7 @@ label {
 }
 
 .selectedLabel {
-	font-size: 15px;
+	font-size: 12px;
 	fill: #fc8d62;
 	font-weight: bold;
 	font-style: italic;
