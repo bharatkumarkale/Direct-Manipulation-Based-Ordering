@@ -8,3 +8,5 @@ A Tool to demonstrate and evaluate the proposed interactive reordering method ba
 
 1. The initial view presents options for the user to choose which chart and what dataset to use.
 2. Based on the options chosen corresponding visualizations supporting the proposed interaction are loaded for the user to play and provide feedback.
+
+Try this tool - [Direct Ordering](https://bharatkumarkale.github.io/DirectOrdering/)
