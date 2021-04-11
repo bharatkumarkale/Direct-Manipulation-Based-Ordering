@@ -10,3 +10,5 @@ A Tool to demonstrate and evaluate the proposed interactive reordering method ba
 2. Based on the options chosen corresponding visualizations supporting the proposed interaction are loaded for the user to play and provide feedback.
 
 Try this tool - [Direct Ordering](https://bharatkumarkale.github.io/DirectOrdering/)
+
+Presentation at [ESIDA 21](https://sites.google.com/view/esida2021/home) workshop - [Direct Ordering](https://youtu.be/Wl633axxO3g)
